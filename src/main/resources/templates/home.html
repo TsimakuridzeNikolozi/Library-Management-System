@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Library Management Home Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+<header class="bg-dark text-white text-center py-4">
+    <h1>Welcome to My Website</h1>
+</header>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">My Website</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/patrons}">Patrons</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/books}">books</a>
+                </li>
+                <li class="nav-item">
+                    <!-- Add a logout button -->
+                    <form action="#" th:action="@{/logout}"
+                          method="POST">
+                        <input type="submit" value="Logout" class="btn btn-outline-primary mt-2" />
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="container mt-4">
+    <section class="text-center">
+        <h2 class="mb-3">Homepage Content</h2>
+        <p>This is the homepage of my website.</p>
+    </section>
+</main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
