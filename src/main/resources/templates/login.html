@@ -26,7 +26,6 @@
 
                     <form th:action="@{/authenticateTheUser}" method="POST">
 
-                        <!-- Place for messages: error, alert, etc ... -->
                         <div th:if="${param.error}" class="alert alert-danger">
                             Invalid username and password.
                         </div>

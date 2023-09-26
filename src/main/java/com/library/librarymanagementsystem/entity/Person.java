@@ -19,4 +19,8 @@ public class Person extends BaseEntity {
 
     @Column(name = "last_name", length = 30, nullable = false)
     private String lastName;
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

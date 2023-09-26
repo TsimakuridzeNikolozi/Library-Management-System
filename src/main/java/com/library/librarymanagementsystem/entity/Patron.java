@@ -1,7 +1,11 @@
 package com.library.librarymanagementsystem.entity;
 
+import com.library.librarymanagementsystem.enumeration.Membership;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -17,9 +21,10 @@ public class Patron extends Person {
     @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "book_patron",
-            joinColumns = @JoinColumn(name = "patron_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private List<Book> borrowedBooks;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "membership", length = 50, nullable = false)
+    private Membership membership;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "patron")
+    private List<BookLoan> bookLoans;
 }
