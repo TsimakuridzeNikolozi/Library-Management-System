@@ -19,7 +19,7 @@
     <h1>List of Books</h1>
 
     <form th:action="${'books?'}" method="GET" class="mt-5 mb-4">
-        <h3 style="color: gray">Search by Title, ISBN, or Genre</h3>
+        <h3 style="color: gray">Search by Title, ISBN, or Description</h3>
         <div class="input-group mb-3">
             <input type="hidden" class="form-control" name="pageNo" th:value="${'1'}">
             <input type="hidden" class="form-control" name="sortField" th:value="${sortField}">
