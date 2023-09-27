@@ -26,9 +26,8 @@
 
                     <form th:action="@{/register/processRegistrationForm}" th:object="${webUser}" method="POST">
 
-                        <!-- Place for messages: error, alert, etc ... -->
-                        <div th:if="${param.registrationError}" class="alert alert-danger">
-                            <span th:text="${param.registrationError}"></span>
+                        <div th:if="${registrationError}" class="alert alert-danger">
+                            <span th:text="${registrationError}"></span>
                         </div>
 
                         <div class="mb-3">

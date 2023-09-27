@@ -56,6 +56,7 @@ public class RegistrationController {
 		
 		// form validation
 		 if (theBindingResult.hasErrors()){
+			 theModel.addAttribute("registrationError", "Binding error");
 			 return "/registration-form";
 		 }
 
