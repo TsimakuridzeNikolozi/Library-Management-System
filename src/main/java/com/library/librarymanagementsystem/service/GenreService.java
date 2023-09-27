@@ -24,4 +24,6 @@ public interface GenreService {
     List<String> getAllGenreNames();
 
     Page<Genre> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
+
+    Page<Genre> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword);
 }

@@ -95,4 +95,15 @@ public class BookLoanServiceImpl implements BookLoanService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return bookLoanRepository.findAll(pageable);
     }
+
+    @Override
+    public Page<BookLoan> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        if (searchKeyword == null || searchKeyword.isEmpty())
+            return bookLoanRepository.findAll(pageable);
+        return bookLoanRepository.findAllByKeyword(searchKeyword, pageable);
+    }
 }

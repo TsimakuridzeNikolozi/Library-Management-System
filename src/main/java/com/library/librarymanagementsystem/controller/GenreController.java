@@ -1,7 +1,5 @@
 package com.library.librarymanagementsystem.controller;
 
-import com.library.librarymanagementsystem.entity.Author;
-import com.library.librarymanagementsystem.entity.BookLoan;
 import com.library.librarymanagementsystem.entity.Genre;
 import com.library.librarymanagementsystem.service.BookService;
 import com.library.librarymanagementsystem.service.GenreService;
@@ -23,18 +21,45 @@ public class GenreController {
     private static final String DEFAULT_SORT_FIELD = "name";
     private static final String DEFAULT_SORT_DIR = "asc";
     private static final String DEFAULT_SEARCH_KEYWORD = "";
+    private static final int DEFAULT_PAGE_SIZE = 5;
 
     private final GenreService genreService;
     private final BookService bookService;
+
     GenreController(GenreService genreService, BookService bookService) {
         this.genreService = genreService;
         this.bookService = bookService;
     }
 
     @RequestMapping("/genres")
-    public String getAllGenres(Model model) {
-        return findPaginated(DEFAULT_PAGE, DEFAULT_SORT_FIELD, DEFAULT_SORT_DIR, model);
+    public String searchAndPagination(@RequestParam(name = "pageNo", required = false) String pageNo,
+                                      @RequestParam(name = "sortField", required = false) String sortField,
+                                      @RequestParam(name = "sortDir", required = false) String sortDir,
+                                      @RequestParam(name = "searchKeyword", required = false) String searchKeyword,
+                                      Model model) {
+
+        if (pageNo == null || pageNo.isEmpty()) pageNo = String.valueOf(DEFAULT_PAGE);
+        if (sortField == null || sortField.isEmpty()) sortField = DEFAULT_SORT_FIELD;
+        if (sortDir == null || sortDir.isEmpty()) sortDir = DEFAULT_SORT_DIR;
+        if (searchKeyword == null || searchKeyword.isEmpty()) searchKeyword = DEFAULT_SEARCH_KEYWORD;
+
+        Page<Genre> page = genreService.findPaginatedPlusSearch(Integer.parseInt(pageNo), DEFAULT_PAGE_SIZE, sortField, sortDir, searchKeyword);
+        List<Genre> listGenres = page.getContent();
+
+        model.addAttribute("currentPage", Integer.parseInt(pageNo));
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        model.addAttribute("searchKeyword", searchKeyword);
+
+        model.addAttribute("genres", listGenres);
+        return "list-genres";
     }
+
 
     @GetMapping("/add-genre")
     public String addGenre(Genre genre, Model model) {
@@ -82,27 +107,5 @@ public class GenreController {
         genreService.deleteGenre(id);
         model.addAttribute("genres", genreService.getAllGenres());
         return "redirect:/genres";
-    }
-
-    @GetMapping("/genres/{pageNo}")
-    public String findPaginated(@PathVariable(name = "pageNo") int pageNo,
-                                @RequestParam("sortField") String sortField,
-                                @RequestParam("sortDir") String sortDir,
-                                Model model) {
-        int pageSize = 5;
-
-        Page <Genre> page = genreService.findPaginated(pageNo, pageSize, sortField, sortDir);
-        List <Genre> listGenres = page.getContent();
-
-        model.addAttribute("currentPage", pageNo);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("totalItems", page.getTotalElements());
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-
-        model.addAttribute("genres", listGenres);
-        return "list-genres";
     }
 }

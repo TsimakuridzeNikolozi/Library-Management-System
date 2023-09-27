@@ -71,4 +71,15 @@ public class AuthorServiceImpl implements AuthorService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return authorRepository.findAll(pageable);
     }
+
+    @Override
+    public Page<Author> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        if (searchKeyword == null || searchKeyword.isEmpty())
+            return authorRepository.findAll(pageable);
+        return authorRepository.findAllByKeyword(searchKeyword, pageable);
+    }
 }

@@ -18,7 +18,23 @@
 
     <h1>List of Authors</h1>
 
-    <a href="/add-author" class="btn btn-success btn-block">
+    <form th:action="${'authors?'}" method="GET" class="mt-5 mb-4">
+        <h3 style="color: gray">Search by Name</h3>
+        <div class="input-group mb-3">
+            <input type="hidden" class="form-control" name="pageNo" th:value="${'1'}">
+            <input type="hidden" class="form-control" name="sortField" th:value="${sortField}">
+            <input type="hidden" class="form-control" name="sortDir" th:value="${sortDir}">
+            <input type="text" class="form-control" name="searchKeyword" th:placeholder="${searchKeyword}" required>
+            <div class="input-group-append mx-2">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+            <div class="input-group-append">
+                <a class="btn btn-secondary" th:href="@{'/authors?pageNo=' + ${'1'} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword='}">Clear</a>
+            </div>
+        </div>
+    </form>
+
+    <a href="/add-author" class="btn btn-success btn-block mb-2">
         <div class="d-flex align-items-center">
             Add Author
             <span class="material-symbols-outlined">add</span>
@@ -28,17 +44,17 @@
         <thead class="bg-dark text-white">
         <tr>
             <th>
-                <a th:href="@{'/authors/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir}}">
+                <a th:href="@{'/authors?pageNo=' + ${currentPage} + '&sortField=firstName&sortDir=' + ${reverseSortDir} + '&searchKeyword=' + ${searchKeyword}}">
                     First Name
                 </a>
             </th>
             <th>
-                <a th:href="@{'/authors/' + ${currentPage} + '?sortField=lastName&sortDir=' + ${reverseSortDir}}">
+                <a th:href="@{'/authors?pageNo=' + ${currentPage} + '&sortField=lastName&sortDir=' + ${reverseSortDir} + '&searchKeyword=' + ${searchKeyword}}">
                     Last Name
                 </a>
             </th>
             <th>
-                <a th:href="@{'/authors/' + ${currentPage} + '?sortField=birthDate&sortDir=' + ${reverseSortDir}}">
+                <a th:href="@{'/authors?pageNo=' + ${currentPage} + '&sortField=birthDate&sortDir=' + ${reverseSortDir} + '&searchKeyword=' + ${searchKeyword}}">
                     Birth Date
                 </a>
             </th>
@@ -79,17 +95,20 @@
             </div>
             <div class = "col-sm-1">
      <span th:each="i: ${#numbers.sequence(1, totalPages)}">
-      <a th:if="${currentPage != i}" th:href="@{'/authors/' + ${i}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+      <a th:if="${currentPage != i}"
+         th:href="@{'/authors?pageNo=' + ${i} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword=' + ${searchKeyword}}">[[${i}]]</a>
       <span th:unless="${currentPage != i}">[[${i}]]</span>  &nbsp; &nbsp;
      </span>
             </div>
             <div class = "col-sm-1">
-                <a th:if="${currentPage < totalPages}" th:href="@{'/authors/' + ${currentPage + 1}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{'/authors?pageNo=' + ${currentPage + 1} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword=' + ${searchKeyword}}">Next</a>
                 <span th:unless="${currentPage < totalPages}">Next</span>
             </div>
 
             <div class="col-sm-1">
-                <a th:if="${currentPage < totalPages}" th:href="@{'/authors/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{'/authors?pageNo=' + ${totalPages} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword=' + ${searchKeyword}}">Last</a>
                 <span th:unless="${currentPage < totalPages}">Last</span>
             </div>
         </div>

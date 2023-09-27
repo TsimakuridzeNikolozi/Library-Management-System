@@ -1,7 +1,5 @@
 package com.library.librarymanagementsystem.controller;
 
-import com.library.librarymanagementsystem.entity.Author;
-import com.library.librarymanagementsystem.entity.BookLoan;
 import com.library.librarymanagementsystem.entity.Patron;
 import com.library.librarymanagementsystem.service.PatronService;
 import org.springframework.data.domain.Page;
@@ -22,6 +20,7 @@ public class PatronController {
     private static final String DEFAULT_SORT_FIELD = "firstName";
     private static final String DEFAULT_SORT_DIR = "asc";
     private static final String DEFAULT_SEARCH_KEYWORD = "";
+    private static final int DEFAULT_PAGE_SIZE = 5;
 
     private final PatronService patronService;
 
@@ -30,9 +29,34 @@ public class PatronController {
     }
 
     @RequestMapping("/patrons")
-    public String getAllBooks(Model model) {
-        return findPaginated(DEFAULT_PAGE, DEFAULT_SORT_FIELD, DEFAULT_SORT_DIR, model);
+    public String searchAndPagination(@RequestParam(name = "pageNo", required = false) String pageNo,
+                                      @RequestParam(name = "sortField", required = false) String sortField,
+                                      @RequestParam(name = "sortDir", required = false) String sortDir,
+                                      @RequestParam(name = "searchKeyword", required = false) String searchKeyword,
+                                      Model model) {
+
+        if (pageNo == null || pageNo.isEmpty()) pageNo = String.valueOf(DEFAULT_PAGE);
+        if (sortField == null || sortField.isEmpty()) sortField = DEFAULT_SORT_FIELD;
+        if (sortDir == null || sortDir.isEmpty()) sortDir = DEFAULT_SORT_DIR;
+        if (searchKeyword == null || searchKeyword.isEmpty()) searchKeyword = DEFAULT_SEARCH_KEYWORD;
+
+        Page<Patron> page = patronService.findPaginatedPlusSearch(Integer.parseInt(pageNo), DEFAULT_PAGE_SIZE, sortField, sortDir, searchKeyword);
+        List<Patron> listPatrons = page.getContent();
+
+        model.addAttribute("currentPage", Integer.parseInt(pageNo));
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        model.addAttribute("searchKeyword", searchKeyword);
+
+        model.addAttribute("patrons", listPatrons);
+        return "list-patrons";
     }
+
 
     @GetMapping("/add-patron")
     public String addPatron(Patron patron, Model model) {
@@ -76,27 +100,5 @@ public class PatronController {
         patronService.deletePatron(id);
         model.addAttribute("patrons", patronService.getAllPatrons());
         return "redirect:/patrons";
-    }
-
-    @GetMapping("/patrons/{pageNo}")
-    public String findPaginated(@PathVariable(name = "pageNo") int pageNo,
-                                @RequestParam("sortField") String sortField,
-                                @RequestParam("sortDir") String sortDir,
-                                Model model) {
-        int pageSize = 5;
-
-        Page <Patron> page = patronService.findPaginated(pageNo, pageSize, sortField, sortDir);
-        List <Patron> listPatrons = page.getContent();
-
-        model.addAttribute("currentPage", pageNo);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("totalItems", page.getTotalElements());
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-
-        model.addAttribute("patrons", listPatrons);
-        return "list-patrons";
     }
 }

@@ -21,4 +21,6 @@ public interface AuthorService {
     void deleteAuthor(UUID id);
 
     Page<Author> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
+
+    Page<Author> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword);
 }

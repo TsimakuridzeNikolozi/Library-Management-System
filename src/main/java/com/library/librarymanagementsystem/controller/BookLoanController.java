@@ -1,7 +1,5 @@
 package com.library.librarymanagementsystem.controller;
 
-import com.library.librarymanagementsystem.entity.Author;
-import com.library.librarymanagementsystem.entity.Book;
 import com.library.librarymanagementsystem.entity.BookLoan;
 import com.library.librarymanagementsystem.service.BookLoanService;
 import com.library.librarymanagementsystem.service.BookService;
@@ -27,6 +25,7 @@ public class BookLoanController {
     private static final String DEFAULT_SORT_FIELD = "loanDate";
     private static final String DEFAULT_SORT_DIR = "asc";
     private static final String DEFAULT_SEARCH_KEYWORD = "";
+    private static final int DEFAULT_PAGE_SIZE = 5;
 
     private final BookLoanService bookLoanService;
     private final PatronService patronService;
@@ -45,9 +44,34 @@ public class BookLoanController {
     }
 
     @RequestMapping("/book-loans")
-    public String getAllBookLoans(Model model) {
-        return findPaginated(DEFAULT_PAGE, DEFAULT_SORT_FIELD, DEFAULT_SORT_DIR, model);
+    public String searchAndPagination(@RequestParam(name = "pageNo", required = false) String pageNo,
+                                      @RequestParam(name = "sortField", required = false) String sortField,
+                                      @RequestParam(name = "sortDir", required = false) String sortDir,
+                                      @RequestParam(name = "searchKeyword", required = false) String searchKeyword,
+                                      Model model) {
+
+        if (pageNo == null || pageNo.isEmpty()) pageNo = String.valueOf(DEFAULT_PAGE);
+        if (sortField == null || sortField.isEmpty()) sortField = DEFAULT_SORT_FIELD;
+        if (sortDir == null || sortDir.isEmpty()) sortDir = DEFAULT_SORT_DIR;
+        if (searchKeyword == null || searchKeyword.isEmpty()) searchKeyword = DEFAULT_SEARCH_KEYWORD;
+
+        Page<BookLoan> page = bookLoanService.findPaginatedPlusSearch(Integer.parseInt(pageNo), DEFAULT_PAGE_SIZE, sortField, sortDir, searchKeyword);
+        List<BookLoan> listBookLoans = page.getContent();
+
+        model.addAttribute("currentPage", Integer.parseInt(pageNo));
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        model.addAttribute("searchKeyword", searchKeyword);
+
+        model.addAttribute("bookLoans", listBookLoans);
+        return "list-book-loans";
     }
+
 
     @GetMapping("/add-book-loan")
     public String addBookLoan(BookLoan bookLoan, Model model) {
@@ -79,7 +103,7 @@ public class BookLoanController {
         String result = "Success";
         try {
             mailService.sendMailFor(bookLoanService.getBookLoanById(id));
-        } catch(Exception e) {
+        } catch (Exception e) {
             result = e.getMessage();
         }
         model.addAttribute("emailError", result);
@@ -125,27 +149,5 @@ public class BookLoanController {
         model.addAttribute("overdueBookLoans", bookLoanService.getOverdueBookLoans());
         model.addAttribute("transactionHistory", bookLoanService.getAllBookLoansSortedByLoanDateDesc());
         return "report";
-    }
-
-    @GetMapping("/book-loans/{pageNo}")
-    public String findPaginated(@PathVariable(name = "pageNo") int pageNo,
-                                @RequestParam("sortField") String sortField,
-                                @RequestParam("sortDir") String sortDir,
-                                Model model) {
-        int pageSize = 5;
-
-        Page <BookLoan> page = bookLoanService.findPaginated(pageNo, pageSize, sortField, sortDir);
-        List <BookLoan> listBookLoans = page.getContent();
-
-        model.addAttribute("currentPage", pageNo);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("totalItems", page.getTotalElements());
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-
-        model.addAttribute("bookLoans", listBookLoans);
-        return "list-book-loans";
     }
 }

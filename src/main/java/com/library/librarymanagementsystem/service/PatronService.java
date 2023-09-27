@@ -21,4 +21,6 @@ public interface PatronService {
     void deletePatron(UUID id);
 
     Page<Patron> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
+
+    Page<Patron> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword);
 }

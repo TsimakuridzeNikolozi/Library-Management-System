@@ -1,6 +1,5 @@
 package com.library.librarymanagementsystem.service.impl;
 
-import com.library.librarymanagementsystem.entity.Author;
 import com.library.librarymanagementsystem.entity.Genre;
 import com.library.librarymanagementsystem.repository.GenreRepository;
 import com.library.librarymanagementsystem.service.GenreService;
@@ -74,5 +73,16 @@ public class GenreServiceImpl implements GenreService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return genreRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Genre> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        if (searchKeyword == null || searchKeyword.isEmpty())
+            return genreRepository.findAll(pageable);
+        return genreRepository.findAllByKeyword(searchKeyword, pageable);
     }
 }

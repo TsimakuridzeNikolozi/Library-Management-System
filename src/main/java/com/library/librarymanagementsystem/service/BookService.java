@@ -31,4 +31,6 @@ public interface BookService {
     List<Integer> getNumberOfBooksByGenre(List<String> genreNames);
 
     Page<Book> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
+
+    Page<Book> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword);
 }

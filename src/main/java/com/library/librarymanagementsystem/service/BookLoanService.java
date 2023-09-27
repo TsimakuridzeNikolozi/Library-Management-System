@@ -1,5 +1,6 @@
 package com.library.librarymanagementsystem.service;
 
+import com.library.librarymanagementsystem.entity.Author;
 import com.library.librarymanagementsystem.entity.BookLoan;
 import org.springframework.data.domain.Page;
 
@@ -24,4 +25,6 @@ public interface BookLoanService {
     List<Integer> getNumOfBookLoansForPastDays(int numberOfDays);
 
     Page<BookLoan> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
+
+    Page<BookLoan> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword);
 }

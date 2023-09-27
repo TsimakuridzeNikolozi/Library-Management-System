@@ -18,6 +18,22 @@
 
     <h1>List of Books</h1>
 
+    <form th:action="${'books?'}" method="GET" class="mt-5 mb-4">
+        <h3 style="color: gray">Search by Title, ISBN, or Genre</h3>
+        <div class="input-group mb-3">
+            <input type="hidden" class="form-control" name="pageNo" th:value="${'1'}">
+            <input type="hidden" class="form-control" name="sortField" th:value="${sortField}">
+            <input type="hidden" class="form-control" name="sortDir" th:value="${sortDir}">
+            <input type="text" class="form-control" name="searchKeyword" th:placeholder="${searchKeyword}" required>
+            <div class="input-group-append mx-2">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+            <div class="input-group-append">
+                <a class="btn btn-secondary" th:href="@{'/books?pageNo=' + ${'1'} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword='}">Clear</a>
+            </div>
+        </div>
+    </form>
+
     <a href="/add-book" class="btn btn-success btn-block">
         <div class="d-flex align-items-center">
             Add Book
@@ -29,12 +45,12 @@
         <thead class="bg-dark text-white">
         <tr>
             <th>
-                <a th:href="@{'/books/' + ${currentPage} + '?sortField=title&sortDir=' + ${reverseSortDir}}">
+                <a th:href="@{'/books?pageNo=' + ${currentPage} + '&sortField=title&sortDir=' + ${reverseSortDir} + '&searchKeyword=' + ${searchKeyword}}">
                     Title
                 </a>
             </th>
             <th>
-                <a th:href="@{'/books/' + ${currentPage} + '?sortField=isbn&sortDir=' + ${reverseSortDir}}">
+                <a th:href="@{'/books?pageNo=' + ${currentPage} + '&sortField=isbn&sortDir=' + ${reverseSortDir} + '&searchKeyword=' + ${searchKeyword}}">
                     ISBN
                 </a>
             </th>
@@ -42,7 +58,7 @@
             <th>Description</th>
             <th>Authors</th>
             <th>
-                <a th:href="@{'/books/' + ${currentPage} + '?sortField=quantity&sortDir=' + ${reverseSortDir}}">
+                <a th:href="@{'/books?pageNo=' + ${currentPage} + '&sortField=quantity&sortDir=' + ${reverseSortDir} + '&searchKeyword=' + ${searchKeyword}}">
                     Quantity
                 </a>
             </th>
@@ -88,17 +104,20 @@
             </div>
             <div class = "col-sm-1">
      <span th:each="i: ${#numbers.sequence(1, totalPages)}">
-      <a th:if="${currentPage != i}" th:href="@{'/books/' + ${i}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+      <a th:if="${currentPage != i}"
+         th:href="@{'/books?pageNo=' + ${i} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword=' + ${searchKeyword}}">[[${i}]]</a>
       <span th:unless="${currentPage != i}">[[${i}]]</span>  &nbsp; &nbsp;
      </span>
             </div>
             <div class = "col-sm-1">
-                <a th:if="${currentPage < totalPages}" th:href="@{'/books/' + ${currentPage + 1}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{'/books?pageNo=' + ${currentPage + 1} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword=' + ${searchKeyword}}">Next</a>
                 <span th:unless="${currentPage < totalPages}">Next</span>
             </div>
 
             <div class="col-sm-1">
-                <a th:if="${currentPage < totalPages}" th:href="@{'/books/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{'/books?pageNo=' + ${totalPages} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + '&searchKeyword=' + ${searchKeyword}}">Last</a>
                 <span th:unless="${currentPage < totalPages}">Last</span>
             </div>
         </div>

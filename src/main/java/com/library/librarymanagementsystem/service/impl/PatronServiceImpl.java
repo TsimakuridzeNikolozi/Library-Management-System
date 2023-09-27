@@ -1,6 +1,5 @@
 package com.library.librarymanagementsystem.service.impl;
 
-import com.library.librarymanagementsystem.entity.Author;
 import com.library.librarymanagementsystem.entity.Patron;
 import com.library.librarymanagementsystem.repository.PatronRepository;
 import com.library.librarymanagementsystem.service.PatronService;
@@ -69,5 +68,16 @@ public class PatronServiceImpl implements PatronService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return patronRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Patron> findPaginatedPlusSearch(int pageNo, int pageSize, String sortField, String sortDirection, String searchKeyword) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        if (searchKeyword == null || searchKeyword.isEmpty())
+            return patronRepository.findAll(pageable);
+        return patronRepository.findAllByKeyword(searchKeyword, pageable);
     }
 }
